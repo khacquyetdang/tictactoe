@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorBlue">#2ba2c2</color>
+    <color name="colorOrange">#c27c2b</color>
+    <color name="colorPlayer0">#d9003a</color>
+    <color name="colorPlayer1">#4a4f6a</color>
+    <color name="colorGamesBackGround">#282b3f</color>
+    <color name="colorGrayClear">#C0C0C0</color>
+
+</resources>
