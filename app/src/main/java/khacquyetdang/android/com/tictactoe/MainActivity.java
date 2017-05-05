@@ -1,27 +1,29 @@
 package khacquyetdang.android.com.tictactoe;
 
-import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
 
     private int activePlayer = 0;
-
+    private boolean gameIsActive = true;
+    private LinearLayout playAgainLayout;
     private int[] buttonsId = {R.id.imageButton1,
             R.id.imageButton2,
             R.id.imageButton3,
@@ -31,20 +33,27 @@ public class MainActivity extends AppCompatActivity
             R.id.imageButton7,
             R.id.imageButton8,
             R.id.imageButton9};
-    private Map<String, Integer> boardGames;
+    private Map<String, Integer> gameStates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        boardGames = new HashMap<>();
+        gameStates = new HashMap<>();
         for (int btnId : buttonsId) {
             View btnView = findViewById(btnId);
             setView(btnView, R.color.colorGrayClear);
             setViewSize(btnView);
             btnView.setOnClickListener(this);
         }
+        Button playAgainBtn = (Button) findViewById(R.id.playAgainBtn);
+        playAgainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playAgain();
+            }
+        });
     }
 
     public void setViewSize(View view)
@@ -74,62 +83,85 @@ public class MainActivity extends AppCompatActivity
                 String colIJ = "" + i + "" + j;
                 String colIJP1 = "" + i + "" + (j + 1);
                 String colIJP2 = "" + i + "" + (j + 2);
-                if (boardGames.get(colIJ) != null &&
-                        boardGames.get(colIJP1) != null &&
-                        boardGames.get(colIJP2) != null &&
-                        boardGames.get(colIJ) == boardGames.get(colIJP1) &&
-                        boardGames.get(colIJP1) == boardGames.get(colIJP2))
+                if (gameStates.get(colIJ) != null &&
+                        gameStates.get(colIJP1) != null &&
+                        gameStates.get(colIJP2) != null &&
+                        gameStates.get(colIJ) == gameStates.get(colIJP1) &&
+                        gameStates.get(colIJP1) == gameStates.get(colIJP2))
                 {
-                    return boardGames.get(colIJ);
+                    return gameStates.get(colIJ);
                 }
                 String colIP1J = "" + (i  + 1) + "" + j;
                 String colIP2J = "" + (i + 2) + "" + (j);
-                if (boardGames.get(colIJ) != null &&
-                        boardGames.get(colIP2J) != null &&
-                        boardGames.get(colIP1J) != null &&
-                        boardGames.get(colIJ) == boardGames.get(colIP1J) &&
-                        boardGames.get(colIP1J) == boardGames.get(colIP2J))
+                if (gameStates.get(colIJ) != null &&
+                        gameStates.get(colIP2J) != null &&
+                        gameStates.get(colIP1J) != null &&
+                        gameStates.get(colIJ) == gameStates.get(colIP1J) &&
+                        gameStates.get(colIP1J) == gameStates.get(colIP2J))
                 {
-                    return boardGames.get(colIJ);
+                    return gameStates.get(colIJ);
                 }
 
 
                 String colIP1JP1 = "" + (i  + 1) + "" + (j + 1);
                 String colIP2JP2 = "" + (i + 2) + "" + (j + 2);
-                if (boardGames.get(colIJ) != null &&
-                        boardGames.get(colIP1JP1) != null &&
-                        boardGames.get(colIP2JP2) != null &&
-                        boardGames.get(colIJ) == boardGames.get(colIP1JP1) &&
-                        boardGames.get(colIP1JP1) == boardGames.get(colIP2JP2))
+                if (gameStates.get(colIJ) != null &&
+                        gameStates.get(colIP1JP1) != null &&
+                        gameStates.get(colIP2JP2) != null &&
+                        gameStates.get(colIJ) == gameStates.get(colIP1JP1) &&
+                        gameStates.get(colIP1JP1) == gameStates.get(colIP2JP2))
                 {
-                    return boardGames.get(colIJ);
+                    return gameStates.get(colIJ);
                 }
 
                 String colIP1JM1 = "" + (i  + 1) + "" + (j - 1);
                 String colIP2JM2 = "" + (i + 2) + "" + (j - 2);
-                if (boardGames.get(colIJ) != null &&
-                        boardGames.get(colIP1JM1) != null &&
-                        boardGames.get(colIP2JM2) != null &&
-                        boardGames.get(colIJ) == boardGames.get(colIP1JM1) &&
-                        boardGames.get(colIP1JM1) == boardGames.get(colIP2JM2))
+                if (gameStates.get(colIJ) != null &&
+                        gameStates.get(colIP1JM1) != null &&
+                        gameStates.get(colIP2JM2) != null &&
+                        gameStates.get(colIJ) == gameStates.get(colIP1JM1) &&
+                        gameStates.get(colIP1JM1) == gameStates.get(colIP2JM2))
                 {
-                    return boardGames.get(colIJ);
+                    return gameStates.get(colIJ);
                 }
             }
         }
 
         return 2;
     }
+
+    private void playAgain()
+    {
+        gameIsActive = true;
+        activePlayer = 0;
+        playAgainLayout.setVisibility(View.GONE);
+        for (int i = 0;  i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                String colIJ = "" + i + "" + j;
+                gameStates.put(colIJ, null);
+            }
+        }
+        for (int btnId : buttonsId)
+        {
+            View view = findViewById(btnId);
+            if (view != null)
+            {
+                view.animate().rotation(360).setDuration(500);
+                setView(view, R.color.colorGrayClear);
+            }
+        }
+
+    }
     @Override
     public void onClick(View view) {
         String tag = (String) view.getTag();
-        if (boardGames.get(tag) != null)
+        if (gameStates.get(tag) != null || gameIsActive == false)
         {
             Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
             view.startAnimation(shake);
             return ;
         }
-        boardGames.put(tag, activePlayer);
+        gameStates.put(tag, activePlayer);
         if (view instanceof Button) {
             if (activePlayer == 0) {
                 activePlayer = 1;
@@ -145,11 +177,16 @@ public class MainActivity extends AppCompatActivity
         int winner = checkWinner();
         if (winner == 1 || winner == 0)
         {
+            gameIsActive = false;
+            Animation slideUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
 
             CharSequence text = "Player "  + winner + " wins the games !";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-            toast.show();
+            playAgainLayout = (LinearLayout) findViewById(R.id.playAgainLayout);
+            TextView playAgainTextView = (TextView) findViewById(R.id.playAgainTextView);
+            playAgainTextView.setText(text);
+            playAgainLayout.setAlpha(1f);
+            playAgainLayout.startAnimation(slideUp);
+            playAgainLayout.setVisibility(View.VISIBLE);
         }
     }
 }
