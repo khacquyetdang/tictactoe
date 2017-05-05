@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +65,61 @@ public class MainActivity extends AppCompatActivity
             view.setBackgroundColor(getResources().getColor(color));
         }
     }
+    private int checkWinner()
+    {
+        for (int i = 0;  i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                String colIJ = "" + i + "" + j;
+                String colIJP1 = "" + i + "" + (j + 1);
+                String colIJP2 = "" + i + "" + (j + 2);
+                if (boardGames.get(colIJ) != null &&
+                        boardGames.get(colIJP1) != null &&
+                        boardGames.get(colIJP2) != null &&
+                        boardGames.get(colIJ) == boardGames.get(colIJP1) &&
+                        boardGames.get(colIJP1) == boardGames.get(colIJP2))
+                {
+                    return boardGames.get(colIJ);
+                }
+                String colIP1J = "" + (i  + 1) + "" + j;
+                String colIP2J = "" + (i + 2) + "" + (j);
+                if (boardGames.get(colIJ) != null &&
+                        boardGames.get(colIP2J) != null &&
+                        boardGames.get(colIP1J) != null &&
+                        boardGames.get(colIJ) == boardGames.get(colIP1J) &&
+                        boardGames.get(colIP1J) == boardGames.get(colIP2J))
+                {
+                    return boardGames.get(colIJ);
+                }
+
+
+                String colIP1JP1 = "" + (i  + 1) + "" + (j + 1);
+                String colIP2JP2 = "" + (i + 2) + "" + (j + 2);
+                if (boardGames.get(colIJ) != null &&
+                        boardGames.get(colIP1JP1) != null &&
+                        boardGames.get(colIP2JP2) != null &&
+                        boardGames.get(colIJ) == boardGames.get(colIP1JP1) &&
+                        boardGames.get(colIP1JP1) == boardGames.get(colIP2JP2))
+                {
+                    return boardGames.get(colIJ);
+                }
+
+                String colIP1JM1 = "" + (i  + 1) + "" + (j - 1);
+                String colIP2JM2 = "" + (i + 2) + "" + (j - 2);
+                if (boardGames.get(colIJ) != null &&
+                        boardGames.get(colIP1JM1) != null &&
+                        boardGames.get(colIP2JM2) != null &&
+                        boardGames.get(colIJ) == boardGames.get(colIP1JM1) &&
+                        boardGames.get(colIP1JM1) == boardGames.get(colIP2JM2))
+                {
+                    return boardGames.get(colIJ);
+                }
+            }
+        }
+
+        return 2;
+    }
     @Override
     public void onClick(View view) {
         String tag = (String) view.getTag();
@@ -85,6 +141,15 @@ public class MainActivity extends AppCompatActivity
             view.setTranslationY(-1000f);
             //view.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorBlue));
             view.animate().translationYBy(1000f).rotation(720).setDuration(500);
+        }
+        int winner = checkWinner();
+        if (winner == 1 || winner == 0)
+        {
+
+            CharSequence text = "Player "  + winner + " wins the games !";
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+            toast.show();
         }
     }
 }
